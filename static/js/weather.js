@@ -323,9 +323,6 @@ function updateMainCellWeather() { // eslint-disable-line no-unused-vars
         }
         // Make It Happen
         $weatherInfo.appendChild(weatherIcon)
-        $weatherInfo.appendChild(weatherText)
-        $weatherInfo.appendChild(windIcon)
-        $weatherInfo.appendChild(windText)
     }
 }
 
