@@ -46,33 +46,23 @@
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
 }
+
+a#logo .titlefont { 
+    font-family: Saffran; 
+	font-size: 20px;
+}
 </style>
 
-<h1><a title="Message of the Day" href="javascript:showSplash2();"><img class='rocket icon' src='static/images/houstonmapcircle.png'></a></h1>
-<h1>&nbsp;<a title="Donate" href="javascript:showSplash();"><span id="saldo"></span><i class="fa fa-dollar"></i></a>&nbsp;
+<h1><a id="logo" href="./"><span class="titlefont">Your Map Title</span><img class='rocket icon' src='static/images/rocket.png'></a></h1>
+<h1>&nbsp;
         
-<div class="dropdown">
-  <button class="dropbtn"><i class="fa fa-group" title="View Raids"></i></button>
-  <div class="dropdown-content" style="left:0;">
-    <a href="javascript:show_raid('legendary');">Legendary</a>
-    <a href="javascript:show_raid('ttar');">Ttar/Machamp</a>
-    <a href="javascript:show_raid('vintage');">Vintage Park</a>
-    <a href="javascript:show_raid('woodlands');">Woodlands</a>
-    <a href="javascript:show_raid('spring');">Old Town Spring</a>
-    <a href="javascript:show_raid('jv');">Jersey Village</a>
-    <a href="javascript:show_raid('ff');">Fairfield</a>
-    <a href="javascript:show_raid('north');">4-Corners</a>
-    <a href="javascript:show_raid('magnolia');">Magnolia</a>
-    <a href="javascript:show_raid('conroe');">Conroe</a>
-    <a href="javascript:show_raid('east');">East Houston</a>
-  </div>
-</div>
-           
+          
 <div class="dropdown">
   <button class="dropbtn"><i class="fa fa-filter" title="Filter Pokemon"></i></button>
   <div class="dropdown-content" style="left:0;min-width:225px;">
                   <a href="javascript:hideall();     ">All Pokemon Off</a>
                   <a href="javascript:showall();     ">All Pokemon On</a>
+				  <a href="javascript:onlyshiny();     ">Possible shinies</a>
                   <a href="javascript:onlygen1();    ">Gen1 Only</a>
                   <a href="javascript:onlygen2();    ">Gen2 Only</a>
                   <a href="javascript:onlygen3();    ">Gen3 Only</a>
@@ -82,8 +72,6 @@
                   <a href="javascript:showgen1();    ">Turn On Gen1</a>
                   <a href="javascript:showgen2();    ">Turn On Gen2</a>
                   <a href="javascript:showgen3();    ">Turn On Gen3</a>
-                  <a href="javascript:showdratini(); ">Turn On Dratini Family</a>
-                  <a href="javascript:showlarvitar();">Turn On Larvitar Family</a>
                   <a href="javascript:showraids(0,0);">Turn Off Raids</a>
                   <a href="javascript:showraids(1,5);">Only Raids, All Levels</a>
                   <a href="javascript:showraids(5,5);">Only Raids, Level 5</a>
@@ -95,8 +83,8 @@
 </div>
 
 <div class="dropdown">
-  <button class="dropbtn"><i class="fa fa-sun-o" title="Filter Pokemon"></i></button>
-  <div class="dropdown-content" style="left:-150px;min-width:325px;">
+  <button class="dropbtn"><i class="fa fa-cloud" title="Filter by weather"></i></button>
+  <div class="dropdown-content" style="left:0;min-width:325px;">
                   <a href="javascript:hideall();      ">All Pokemon Off</a>
                   <a href="javascript:showall();      ">All Pokemon On</a>
                   <a href="javascript:weather(sunny); ">Weather Pokemon: Sunny</a>
@@ -110,32 +98,63 @@
 </div>
 
 <div class="dropdown">
-  <button class="dropbtn"><i class="fa fa-location-arrow" title="Choose Location"></i></button>
-  <div class="dropdown-content">
-                  <a href="?lat=29.987767&lon=-95.498513">Champions (1960 & Veterans)</a>
-                  <a href="?lat=30.315862&lon=-95.459219">Conroe</a>
-                  <a href="?lat=29.785088&lon=-95.169754">East Houston</a>
-                  <a href="?lat=29.998614&lon=-95.734852">Fairfield</a>
-                  <a href="?lat=29.882420&lon=-95.555508">Jersey Village</a>
-                  <a href="?lat=30.209007&lon=-95.750283">Magnolia</a>
-                  <a href="?lat=30.007729&lon=-95.520800">Meyer Park</a>
-                  <a href="?lat=30.097630&lon=-95.635875">North Tomball 4-Corners</a>
-                  <a href="?lat=30.036272&lon=-95.604581">Northpointe (249 & 99)</a>
-                  <a href="?lat=30.079125&lon=-95.421488">Old Town Spring</a>
-                  <a href="?lat=29.996600&lon=-95.579853">Vintage Park</a>
-                  <a href="?lat=29.961865&lon=-95.546308">Willowbrook Mall</a>
-                  <a href="?lat=30.162501&lon=-95.461409">Woodlands</a>
-
+  <button class="dropbtn"><i class="fa fa-leaf" title="Filter by type"></i></button>
+  <div class="dropdown-content" style="left:0;min-width:225px;">
+                  <a href="javascript:hideall();      ">All Pokemon Off</a>
+                  <a href="javascript:showall();      ">All Pokemon On</a>
+                  <a href="javascript:showdragon(); ">Dragon types only</a>
+                  <a href="javascript:showwater(); ">Water types only</a>
+                  <a href="javascript:showsteel(); ">Steel types only</a>
+                  <a href="javascript:showfire(); ">Fire types only</a>
+                  <a href="javascript:showrock(); ">Rock types only</a>
+                  <a href="javascript:showdark(); ">Dark types only</a>
+                  <a href="javascript:showbug(); ">Bug types only</a>
+                  <a href="javascript:showground(); ">Ground types only</a>
+                  <a href="javascript:shownormal(); ">Normal types only</a>
+                  <a href="javascript:showfight(); ">Fighting types only</a>
+                  <a href="javascript:showghost(); ">Ghost types only</a>
+                  <a href="javascript:showpsychic(); ">Psychic types only</a>
+                  <a href="javascript:showflying(); ">Flying types only</a>
+                  <a href="javascript:showgrass(); ">Grass types only</a>
+                  <a href="javascript:showpoison(); ">Poison types only</a>
+                  <a href="javascript:showelectric(); ">Electric types only</a>
+                  <a href="javascript:showfairy(); ">Fairy types only</a>
+                  <a href="javascript:showice(); ">Ice types only</a>
   </div>
 </div>
 
 <div class="dropdown">
-  <button class="dropbtn"><i class="fa fa-bars"></i></button>
-  <div class="dropdown-content">
-                  <a href="https://nests.pokemontomball.xyz/nests">Nest List (24 hr delay)</a>
+  <button class="dropbtn"><i class="fa fa-shield" title="Filter by skill"></i></button>
+  <div class="dropdown-content" style="left:0;min-width:225px;">
+                  <a href="javascript:hideall();      ">All Pokemon Off</a>
+                  <a href="javascript:showall();      ">All Pokemon On</a>
+                  <a href="javascript:showattack(); ">Best attackers</a>
+                  <a href="javascript:showdefense(); ">Best defenders</a>
+                  <a href="javascript:showstier(); ">S-Tier</a>
   </div>
 </div>
 
+<div class="dropdown">
+  <button class="dropbtn"><i class="fa fa-location-arrow" title="Locations"></i></button>
+  <div class="dropdown-content" style="left:0;min-width:225px;">
+                  <a href="?lat=4.659918&lon=-74.093402&zoom=12#bogota">Bogota, CO</a>
+                  <a href="?lat=32.799037&lon=-79.949203&zoom=12#charleston">Charleston, SC</a>
+                  <a href="?lat=-38.655080&lon=178.014655&zoom=12#gisborne">Gisborne, NzZ</a>
+				  <a href="?lat=&lon=">Location</a>
+				  <a href="?lat=&lon=">Location 2</a>
+				  <a href="?lat=&lon=">Location 3</a>
+  </div>
+</div>
+
+<div class="dropdown">
+  <button class="dropbtn"><i class="fa fa-paypal" title="Social & Donations"></i></button>
+  <div class="dropdown-content" style="left:0;min-width:225px;">
+                  <a href="http://twitter.com/ketchummaps">Twitter</a>
+				  <a href="link">Text</a>
+				  <a href="link2">Text 2</a>
+				  <a href="link3">Text 3</a>
+  </div>
+</div>  
 </h1>
 
 <script>
