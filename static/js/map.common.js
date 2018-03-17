@@ -859,7 +859,7 @@ var StoreOptions = {
         type: StoreTypes.JSON
     },
     'remember_select_rarity_notify': {
-        default: [], // Common, Uncommon, Rare, Very Rare, Ultra Rare
+        default: [], // Common, Uncommon, Rare, Very Rare, Ultra Rare, New Spawn
         type: StoreTypes.JSON
     },
     'remember_text_perfection_notify': {
@@ -867,18 +867,14 @@ var StoreOptions = {
         type: StoreTypes.Number
     },
     'remember_text_level_notify': {
-        default: 0,
+        default: '',
         type: StoreTypes.Number
     },
-    'excludedRarity': {
-        default: 0, // 0: none, 1: <=Common, 2: <=Uncommon, 3: <=Rare, 4: <=Very Rare, 5: <=Ultra Rare
+	'excludedRarity': {
+        default: 0, // 0: none, 1: <=Common, 2: <=Uncommon, 3: <=Rare, 4: <=Very Rare, 5: <=Ultra Rare, 6: <=New Spawn
         type: StoreTypes.Number
     },
     'showRaids': {
-        default: false,
-        type: StoreTypes.Boolean
-    },
-    'showParkRaidsOnly': {
         default: false,
         type: StoreTypes.Boolean
     },
@@ -894,19 +890,11 @@ var StoreOptions = {
         default: 5,
         type: StoreTypes.Number
     },
-    'showRaidPokemon': {
-        default: 0,
-        type: StoreTypes.Number
-    },
     'showGyms': {
         default: false,
         type: StoreTypes.Boolean
     },
     'useGymSidebar': {
-        default: false,
-        type: StoreTypes.Boolean
-    },
-    'showParkGymsOnly': {
         default: false,
         type: StoreTypes.Boolean
     },
@@ -917,10 +905,6 @@ var StoreOptions = {
     'showTeamGymsOnly': {
         default: 0,
         type: StoreTypes.Number
-    },
-    'showLocation': {
-        default: '',
-        type: StoreTypes.String
     },
     'showLastUpdatedGymsOnly': {
         default: 0,
@@ -938,7 +922,7 @@ var StoreOptions = {
         default: true,
         type: StoreTypes.Boolean
     },
-    'showPokemonStats': {
+	'showPokemonStats': {
         default: true,
         type: StoreTypes.Boolean
     },
@@ -962,14 +946,6 @@ var StoreOptions = {
         default: false,
         type: StoreTypes.Boolean
     },
-    'hideNotNotified': {
-        default: false,
-        type: StoreTypes.Boolean
-    },
-    'showPopups': {
-        default: true,
-        type: StoreTypes.Boolean
-    },
     'showWeatherCells': {
         default: false,
         type: StoreTypes.Boolean
@@ -980,6 +956,14 @@ var StoreOptions = {
     },
     'showWeatherAlerts': {
         default: false,
+        type: StoreTypes.Boolean
+    },
+    'hideNotNotified': {
+        default: false,
+        type: StoreTypes.Boolean
+    },
+    'showPopups': {
+        default: true,
         type: StoreTypes.Boolean
     },
     'playSound': {
@@ -1023,7 +1007,7 @@ var StoreOptions = {
         type: StoreTypes.String
     },
     'iconSizeModifier': {
-        default: 10,
+        default: 0,
         type: StoreTypes.Number
     },
     'scaleByRarity': {
@@ -1039,11 +1023,11 @@ var StoreOptions = {
         type: StoreTypes.JSON
     },
     'searchMarkerStyle': {
-        default: 'none',   //jmk
+        default: 'pokesition',
         type: StoreTypes.String
     },
     'locationMarkerStyle': {
-        default: 'google',    //jmk
+        default: 'mobile',
         type: StoreTypes.String
     },
     'zoomLevel': {
@@ -1078,10 +1062,6 @@ var StoreOptions = {
         default: false,
         type: StoreTypes.Boolean
     },
-    'isClusteringDisabled': {
-        default: false,
-        type: StoreTypes.Boolean
-    },
     'showLocationMarker': {
         default: true,
         type: StoreTypes.Boolean
@@ -1097,7 +1077,7 @@ var StoreOptions = {
     'isSearchMarkerMovable': {
         default: false,
         type: StoreTypes.Boolean
-    }
+    }		      
 }
 
 var Store = {
@@ -1141,6 +1121,28 @@ var mapData = {
     weatherAlerts: {}
 }
 
+function getPokemonIcon(item, sprite, displayHeight) {
+    displayHeight = Math.max(displayHeight, 3)
+    var scale = displayHeight / sprite.iconHeight
+    var scaledIconSize = new google.maps.Size(scale * sprite.iconWidth, scale * sprite.iconHeight)
+    var scaledIconOffset = new google.maps.Point(0, 0)
+    var scaledIconCenterOffset = new google.maps.Point(scale * sprite.iconWidth / 2, scale * sprite.iconHeight / 2)
+
+    let gender_param = item['gender'] ? `&gender=${item['gender']}` : ''
+    let form_param = item['form'] ? `&form=${item['form']}` : ''
+    let costume_param = item['costume'] ? `&costume=${item['costume']}` : ''
+    let weather_param = item['weather_boosted_condition'] ? `&weather=${item['weather_boosted_condition']}` : ''
+    let icon_url = `pkm_img?pkm=${item['pokemon_id']}${gender_param}${form_param}${costume_param}${weather_param}`
+
+    return {
+        url: icon_url,
+        size: scaledIconSize,
+        scaledSize: scaledIconSize,
+        origin: scaledIconOffset,
+        anchor: scaledIconCenterOffset
+    }
+}
+
 // Populated by a JSON request.
 var pokemonRarities = {}
 
@@ -1155,7 +1157,7 @@ function updatePokemonRarities() {
 
 function getPokemonRarity(pokemonId) {
     if (pokemonRarities.hasOwnProperty(pokemonId)) {
-        return pokemonRarities[pokemonId]
+        return i8ln(pokemonRarities[pokemonId])
     }
 
     return ''
@@ -1198,21 +1200,24 @@ function setupPokemonMarkerDetails(item, map, scaleByRarity = true, isNotifyPkmn
 
     if (scaleByRarity) {
         const rarityValues = {
+            'new spawn': 40,
             'very rare': 30,
             'ultra rare': 40,
             'legendary': 50
         }
 
         const pokemonRarity = getPokemonRarity(item['pokemon_id']).toLowerCase()
-
         if (rarityValues.hasOwnProperty(pokemonRarity)) {
-            rarityValue = rarityValues[pokemonRarity]
+            rarityValue = rarityValues[pokemonRarity] 
+            
         }
     }
 
     iconSize += rarityValue
     markerDetails.rarityValue = rarityValue
-    markerDetails.icon = getGoogleSprite(pokemonIndex, sprite, iconSize)
+    markerDetails.icon = generateImages
+        ? getPokemonIcon(item, sprite, iconSize)
+        : getGoogleSprite(pokemonIndex, sprite, iconSize)
     markerDetails.iconSize = iconSize
 
     return markerDetails
@@ -1268,4 +1273,56 @@ function isTouchDevice() {
 function isMobileDevice() {
     //  Basic mobile OS (not browser) detection
     return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+}
+
+function cssPercentageCircle(text, value, perfect_val, good_val, ok_val, meh_val) {
+    // Ring color
+    var ring_color
+    if (value == perfect_val) {
+        ring_color = 'lime'
+    } else if (value >= good_val) {
+        ring_color = 'green'
+    } else if (value >= ok_val) {
+        ring_color = 'olive'
+    } else if (value >= meh_val) {
+        ring_color = 'orange'
+    } else {
+        ring_color = 'red'
+    }
+
+    // CSS styles
+    var percentage = value * 100 / perfect_val
+    var deg = 360 * percentage / 100
+    var circle_styles
+    if (deg <= 180) {
+        circle_styles = `background-color: ${ring_color};
+            background-image: linear-gradient(${90+deg}deg, transparent 50%, Gainsboro 50%),
+                              linear-gradient(90deg, Gainsboro 50%, transparent 50%)');`
+    } else {
+        circle_styles = `background-color: ${ring_color};
+            background-image: linear-gradient(${deg-90}deg, transparent 50%, ${ring_color} 50%),
+                              linear-gradient(90deg, Gainsboro 50%, transparent 50%)');`
+    }
+
+    // HTML output
+    return `<div class="active-border" style='${circle_styles}'>
+                <div class="circle">
+                    <span class="prec" id="prec">${text}</span>
+                </div>
+            </div>`
+}
+
+function get_pokemon_raw_icon_url(p) {
+    if (!generateImages) {
+        return `static/icons/${p.pokemon_id}.png`
+    }
+    var url = 'pkm_img?raw=1&pkm=' + p.pokemon_id
+    var props = ['gender', 'form', 'costume', 'shiny']
+    for (var i = 0; i < props.length; i++) {
+        var prop = props[i]
+        if (prop in p && p[prop] != null && p[prop]) {
+            url += '&' + prop + '=' + p[prop]
+        }
+    }
+    return url
 }
